@@ -1,23 +1,65 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
+import InventoryStage from './components/InventoryStage';
+
+const testAnswers = ['TESTZERO', 'TESTONE', 'TESTTWO', 'TESTTHREE', 'TESTFOUR'];
 
 beforeEach(() => {
 	localStorage.clear();
+	vi.stubGlobal(
+		'fetch',
+		vi.fn(async (_url, options) => {
+			const { stage, answer } = JSON.parse(options.body);
+			return {
+				ok: true,
+				json: async () => ({ correct: answer === testAnswers[stage] }),
+			};
+		}),
+	);
 });
 
 afterEach(() => {
 	cleanup();
+	vi.unstubAllGlobals();
 });
 
-function solveCurrentStage(label, answer) {
+async function solveCurrentStage(label, answer) {
 	fireEvent.change(screen.getByLabelText(label), { target: { value: answer } });
 	fireEvent.click(screen.getByRole('button', { name: 'Check answer' }));
+	await waitFor(() =>
+		expect(
+			screen.getByRole('button', { name: /CONTINUE/ }),
+		).toBeInTheDocument(),
+	);
 	fireEvent.click(screen.getByRole('button', { name: /CONTINUE/ }));
 }
 
 describe('Wetherby investigation', () => {
-	it('requires correct answers and unlocks all six documents in order', () => {
+	it('opens and closes an inventory item detail modal', () => {
+		render(<InventoryStage />);
+
+		fireEvent.click(screen.getByRole('button', { name: /Ivory chess knight/ }));
+
+		expect(screen.getByRole('dialog')).toBeInTheDocument();
+		expect(
+			screen.getByRole('heading', { name: 'Ivory chess knight' }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole('img', { name: 'Ivory chess knight' }),
+		).toBeInTheDocument();
+
+		fireEvent.click(screen.getByRole('button', { name: 'Close item details' }));
+		expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+	});
+
+	it('requires correct answers and unlocks all six documents in order', async () => {
 		render(<App />);
 
 		expect(
@@ -27,21 +69,28 @@ describe('Wetherby investigation', () => {
 			target: { value: 'WRONG' },
 		});
 		fireEvent.click(screen.getByRole('button', { name: 'Check answer' }));
-		expect(screen.getByText(/does not fit the evidence/)).toBeInTheDocument();
+		await waitFor(() =>
+			expect(screen.getByText(/does not fit the evidence/)).toBeInTheDocument(),
+		);
 		expect(
 			screen.getByRole('button', { name: /DOCUMENT II Letters/ }),
 		).toBeDisabled();
 
 		fireEvent.change(screen.getByLabelText('WHAT DOES THE EVIDENCE SPELL?'), {
-			target: { value: 'MARGIN' },
+			target: { value: testAnswers[0] },
 		});
 		fireEvent.click(screen.getByRole('button', { name: 'Check answer' }));
+		await waitFor(() =>
+			expect(
+				screen.getByRole('button', { name: /CONTINUE/ }),
+			).toBeInTheDocument(),
+		);
 		fireEvent.click(screen.getByRole('button', { name: /CONTINUE/ }));
 
-		solveCurrentStage('WHAT DOES THE EVIDENCE SPELL?', 'JOURNAL');
-		solveCurrentStage('DECODE THE CIPHERED SLIP', 'DIFFERENCE');
-		solveCurrentStage('ENTER THE TEN DIGITS IN ORDER', '3124604583');
-		solveCurrentStage('ENTER THE SURVEYOR’S SEAL NUMBER', '320');
+		await solveCurrentStage('WHAT DOES THE EVIDENCE SPELL?', testAnswers[1]);
+		await solveCurrentStage('DECODE THE CIPHERED SLIP', testAnswers[2]);
+		await solveCurrentStage('ENTER THE TEN DIGITS IN ORDER', testAnswers[3]);
+		await solveCurrentStage('ENTER THE SURVEYOR’S SEAL NUMBER', testAnswers[4]);
 
 		expect(
 			screen.getByRole('heading', { name: 'The final instruction' }),

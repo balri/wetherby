@@ -449,12 +449,28 @@ button {
 }
 
 .inventory-entry {
+	width: 100%;
 	min-height: 45px;
 	display: grid;
 	grid-template-columns: 39px minmax(0, 1fr) 64px 14px;
 	align-items: center;
 	gap: 9px;
+	padding: 0;
+	background: transparent;
+	text-align: left;
+	border: 0;
 	border-bottom: 1px solid #e6e4da;
+	cursor: pointer;
+	transition: background 0.18s ease;
+}
+
+.inventory-entry:hover {
+	background: rgba(82, 110, 93, 0.07);
+}
+
+.inventory-entry:focus-visible {
+	position: relative;
+	z-index: 1;
 }
 
 .entry-index {
@@ -482,12 +498,6 @@ button {
 	text-align: right;
 }
 
-.entry-tick {
-	color: var(--red);
-	font: 21px var(--serif);
-	text-align: center;
-}
-
 .artifact-footer {
 	margin: 0 -12px;
 	padding: 12px 0 14px;
@@ -509,6 +519,91 @@ button {
 .instruction-strip svg {
 	flex: 0 0 auto;
 	color: var(--green);
+}
+
+.item-modal-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 20;
+	display: grid;
+	place-items: center;
+	padding: 22px;
+	background: rgba(28, 35, 30, 0.66);
+	backdrop-filter: blur(3px);
+}
+
+.item-modal {
+	position: relative;
+	width: min(760px, 100%);
+	display: grid;
+	grid-template-columns: minmax(0, 1.1fr) minmax(220px, 0.9fr);
+	background: var(--paper);
+	border: 1px solid #d6d4c8;
+	box-shadow: 0 22px 70px rgba(0, 0, 0, 0.26);
+	animation: item-modal-enter 0.2s ease-out both;
+}
+
+.item-modal-image {
+	width: 100%;
+	height: auto;
+	max-height: min(80vh, 500px);
+	object-fit: contain;
+	background: #e4e0d4;
+}
+
+.item-modal-copy {
+	align-self: center;
+	padding: 34px 30px;
+}
+
+.item-modal-copy h3 {
+	margin: 10px 0 14px;
+	font: 600 27px/1.2 var(--serif);
+}
+
+.item-modal-copy p {
+	color: #687168;
+	font-size: 13px;
+	line-height: 1.7;
+}
+
+.item-modal-copy .item-modal-note {
+	padding-bottom: 14px;
+	border-bottom: 1px solid var(--edge);
+	color: var(--green-dark);
+	font: italic 15px/1.5 var(--serif);
+}
+
+.item-modal-copy a {
+	color: var(--green-dark);
+	font: 9px var(--mono);
+}
+
+.item-modal-close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 1;
+	width: 34px;
+	height: 34px;
+	display: grid;
+	place-items: center;
+	padding: 0;
+	border: 1px solid rgba(37, 45, 41, 0.18);
+	background: rgba(247, 245, 235, 0.92);
+	cursor: pointer;
+}
+
+@keyframes item-modal-enter {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .solve-area {
@@ -1339,6 +1434,19 @@ button {
 		grid-template-columns: 24px minmax(0, 1fr) 43px 8px;
 		gap: 5px;
 		min-height: 48px;
+	}
+
+	.item-modal {
+		max-width: 430px;
+		grid-template-columns: 1fr;
+	}
+
+	.item-modal-copy {
+		padding: 23px 22px 25px;
+	}
+
+	.item-modal-copy h3 {
+		font-size: 23px;
 	}
 
 	.entry-item {

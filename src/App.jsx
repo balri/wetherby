@@ -20,7 +20,7 @@ import JournalStage from './components/JournalStage';
 import LettersStage from './components/LettersStage';
 import SurveyorStage from './components/SurveyorStage';
 import TestamentStage from './components/TestamentStage';
-import { addCompletedStage, answerMatches, isStageUnlocked } from './puzzle';
+import { addCompletedStage, isStageUnlocked } from './puzzle';
 
 const stages = [
 	{
@@ -70,28 +70,24 @@ const stages = [
 const hints = [
 	[
 		'Wetherby tells you which dates deserve to stay. Ordinary calendar knowledge is enough.',
-		'Keep only leap-year acquisitions, then sort them from earliest to latest.',
-		'Read the first letter of each kept object: M A R G I N.',
 	],
 	[
 		'The small number at the left of each letter is useful, but it is not a letter.',
 		'Sort the letters by postmark. Use the number to count into the recipient’s first name.',
-		'The ordered initials are J O U R N A L.',
 	],
 	[
-		'The note tells you to use the length of JOURNAL as the shift.',
+		'Use the length of the previous document’s answer as the shift.',
 		'Move each ciphertext letter seven places backward through the alphabet.',
 		'The decoded word names the operation for each reading pair.',
 	],
 	[
 		'The decoded word names the operation. The margin marks separate south from east.',
 		'For each pair, subtract the smaller reading from the larger.',
-		'The ten differences are 3 1 2 4 6 0 4 5 8 3. Keep S first, then E.',
 	],
 	[
 		'Add the five digits in each row separately, then multiply the two sums.',
-		'The southern sum is 16. The eastern sum is 20.',
-		'16 multiplied by 20 gives the three-digit seal number.',
+		'Check each row total before multiplying; the seal has three digits.',
+		'Multiply the two row totals to find the seal number.',
 	],
 	[
 		'The testament supplies the degrees and directions. The journal supplies the minutes.',
@@ -116,30 +112,45 @@ export default function App() {
 	const [activeStage, setActiveStage] = useState(0);
 	const [answer, setAnswer] = useState('');
 	const [feedback, setFeedback] = useState('');
+	const [checkingAnswer, setCheckingAnswer] = useState(false);
 
 	const completed = progress.completed;
 	const isUnlocked = (stage) => isStageUnlocked(stage, completed);
+	const hintsShown = progress.hints[activeStage] || 0;
 
 	function saveProgress(next) {
 		setProgress(next);
 		localStorage.setItem('wetherby-progress', JSON.stringify(next));
 	}
 
-	function checkAnswer(event) {
+	async function checkAnswer(event) {
 		event.preventDefault();
-		if (!answerMatches(activeStage, answer)) {
-			setFeedback(
-				'That does not fit the evidence yet. Recheck the order and the extraction rule.',
-			);
-			return;
-		}
+		setCheckingAnswer(true);
+		try {
+			const response = await fetch('/api/check-answer', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ stage: activeStage, answer }),
+			});
+			if (!response.ok) throw new Error('Answer check failed');
 
-		saveProgress({
-			...progress,
-			completed: addCompletedStage(completed, activeStage),
-		});
-		setFeedback('Correct. The next document is now available.');
-		setAnswer('');
+			const result = await response.json();
+			if (!result.correct) {
+				setFeedback('That does not fit the evidence yet.');
+				return;
+			}
+
+			saveProgress({
+				...progress,
+				completed: addCompletedStage(completed, activeStage),
+			});
+			setFeedback('Correct. The next document is now available.');
+			setAnswer('');
+		} catch {
+			setFeedback('The answer could not be checked. Please try again.');
+		} finally {
+			setCheckingAnswer(false);
+		}
 	}
 
 	function showHint() {
@@ -170,7 +181,6 @@ export default function App() {
 	}
 
 	const stageComplete = completed.includes(activeStage);
-	const hintsShown = progress.hints[activeStage] || 0;
 	const current = stages[activeStage];
 
 	return (
@@ -323,7 +333,11 @@ export default function App() {
 									</button>
 								</div>
 							) : (
-								<form className="answer-form" onSubmit={checkAnswer}>
+								<form
+									className="answer-form"
+									onSubmit={checkAnswer}
+									aria-busy={checkingAnswer}
+								>
 									<label htmlFor="answer">
 										{activeStage === 3
 											? 'ENTER THE TEN DIGITS IN ORDER'
@@ -336,6 +350,7 @@ export default function App() {
 									<div className="answer-row">
 										<input
 											id="answer"
+											disabled={checkingAnswer}
 											value={answer}
 											onChange={(event) => {
 												setAnswer(event.target.value);
@@ -345,7 +360,7 @@ export default function App() {
 												activeStage === 3
 													? 'e.g. 1234567890'
 													: activeStage === 4
-														? 'e.g. 320'
+														? 'e.g. 123'
 														: 'Your answer'
 											}
 											autoComplete="off"
@@ -355,6 +370,7 @@ export default function App() {
 											className="submit-button"
 											type="submit"
 											aria-label="Check answer"
+											disabled={checkingAnswer}
 										>
 											<ArrowRight size={18} />
 										</button>

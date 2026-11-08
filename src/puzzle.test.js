@@ -1,22 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import {
-	addCompletedStage,
-	answerMatches,
-	isStageUnlocked,
-	normalizeAnswer,
-} from './puzzle';
+import { addCompletedStage, isStageUnlocked, normalizeAnswer } from './puzzle';
 
 describe('puzzle answer rules', () => {
 	it('normalizes case and coordinate punctuation', () => {
-		expect(normalizeAnswer(' 31.246 / 04.583 ')).toBe('3124604583');
-		expect(normalizeAnswer('difference')).toBe('DIFFERENCE');
-	});
-
-	it('accepts each stage answer and rejects incorrect answers', () => {
-		expect(answerMatches(0, 'margin')).toBe(true);
-		expect(answerMatches(2, 'difference')).toBe(true);
-		expect(answerMatches(3, '31.246 04.583')).toBe(true);
-		expect(answerMatches(4, '319')).toBe(false);
+		expect(normalizeAnswer(' 12.345 / 67.890 ')).toBe('1234567890');
+		expect(normalizeAnswer('Mixed Case')).toBe('MIXEDCASE');
 	});
 
 	it('unlocks stages in sequence and records completion only once', () => {
