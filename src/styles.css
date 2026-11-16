@@ -324,6 +324,94 @@ button {
 	animation: appear 0.5s both;
 }
 
+.introduction-page {
+	max-width: 1100px;
+	min-height: calc(100vh - 102px);
+	display: flex;
+	justify-content: center;
+	margin: 0 auto;
+	padding: clamp(40px, 8vh, 80px) 0;
+	animation: appear 0.5s both;
+}
+
+.introduction-story {
+	width: 100%;
+	display: grid;
+	grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+	align-items: center;
+	gap: clamp(28px, 5vw, 68px);
+}
+
+.introduction-portrait {
+	margin: 0;
+}
+
+.introduction-portrait img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border: 1px solid rgba(37, 45, 41, 0.2);
+	box-shadow: 0 12px 30px rgba(57, 61, 48, 0.13);
+}
+
+.introduction-portrait figcaption {
+	margin-top: 8px;
+	color: #8a928a;
+	font: 8px var(--mono);
+	letter-spacing: 0.75px;
+}
+
+.introduction-narrative {
+	min-width: 0;
+}
+
+.introduction-page h1 {
+	margin: 13px 0 24px;
+	font: 600 clamp(34px, 5vw, 52px)/1.12 var(--serif);
+}
+
+.introduction-copy {
+	max-width: 680px;
+	color: #59645b;
+	font: 15px/1.8 var(--serif);
+}
+
+.introduction-copy p {
+	margin: 0 0 16px;
+}
+
+.introduction-copy blockquote {
+	margin: 25px 0;
+	padding: 15px 21px;
+	border-left: 2px solid var(--red);
+	background: rgba(189, 91, 67, 0.045);
+	color: #435248;
+	font: italic 18px/1.7 var(--serif);
+}
+
+.introduction-start {
+	width: fit-content;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-top: 12px;
+	padding: 12px 15px;
+	border: 1px solid var(--green-dark);
+	background: var(--green-dark);
+	color: var(--paper);
+	font: 10px var(--mono);
+	letter-spacing: 0.5px;
+	cursor: pointer;
+	transition:
+		background 0.2s ease,
+		border-color 0.2s ease;
+}
+
+.introduction-start:hover {
+	border-color: var(--red);
+	background: var(--red);
+}
+
 @keyframes appear {
 	from {
 		opacity: 0;
@@ -1356,6 +1444,30 @@ button {
 	.topbar {
 		height: 57px;
 		font-size: 8px;
+	}
+
+	.introduction-page {
+		min-height: calc(100vh - 81px);
+		padding: 42px 0;
+	}
+
+	.introduction-story {
+		grid-template-columns: 1fr;
+		gap: 28px;
+	}
+
+	.introduction-portrait {
+		width: min(100%, 580px);
+		margin: 0 auto;
+	}
+
+	.introduction-copy {
+		font-size: 14px;
+	}
+
+	.introduction-copy blockquote {
+		padding: 13px 16px;
+		font-size: 16px;
 	}
 
 	.brand {

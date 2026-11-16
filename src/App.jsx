@@ -15,6 +15,7 @@ import {
 	Sparkles,
 } from 'lucide-react';
 import CipherStage from './components/CipherStage';
+import Introduction from './components/Introduction';
 import InventoryStage from './components/InventoryStage';
 import JournalStage from './components/JournalStage';
 import LettersStage from './components/LettersStage';
@@ -119,6 +120,11 @@ export default function App() {
 	const [checkingAnswer, setCheckingAnswer] = useState(false);
 
 	const completed = progress.completed;
+	const hasStarted = Boolean(
+		progress.started ||
+		completed.length > 0 ||
+		Object.keys(progress.hints).length > 0,
+	);
 	const isUnlocked = (stage) => isStageUnlocked(stage, completed);
 	const hintsShown = progress.hints[activeStage] || 0;
 
@@ -174,6 +180,10 @@ export default function App() {
 		setFeedback('');
 	}
 
+	function beginInvestigation() {
+		saveProgress({ ...progress, started: true });
+	}
+
 	function goToStage(stage) {
 		if (!isUnlocked(stage)) return;
 		if (stage === stages.length - 1 && !completed.includes(stage)) {
@@ -203,230 +213,236 @@ export default function App() {
 				</div>
 			</header>
 
-			<main id="top" className="layout">
-				<aside className="sidebar">
-					<div className="case-label">
-						<span>THE WETHERBY PAPERS</span>
-						<span className="case-stamp">CASE 04</span>
-					</div>
-					<h1>
-						The last will of
-						<br />
-						<em>Mr Ambrose Wetherby</em>
-					</h1>
-					<p className="sidebar-intro">
-						A six-document mystery, assembled from the papers of an eccentric
-						collector.
-					</p>
-					<figure className="archive-photo">
-						<img
-							src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=800&q=80"
-							alt="Tall shelves of books in an old library"
-						/>
-						<figcaption>THE COLLECTOR’S READING ROOM</figcaption>
-					</figure>
-
-					<div className="progress-block">
-						<div className="progress-heading">
-							<span>INVESTIGATION</span>
-							<span>
-								{completed.length} / {stages.length}
-							</span>
+			{hasStarted ? (
+				<main id="top" className="layout">
+					<aside className="sidebar">
+						<div className="case-label">
+							<span>THE WETHERBY PAPERS</span>
+							<span className="case-stamp">CASE 04</span>
 						</div>
-						<div
-							className="progress-track"
-							aria-label={`${completed.length} of ${stages.length} documents solved`}
-						>
-							<span
-								style={{
-									width: `${(completed.length / stages.length) * 100}%`,
-								}}
-							/>
-						</div>
-					</div>
-
-					<nav className="stage-nav" aria-label="Case documents">
-						{stages.map((stage) => {
-							const Icon = stage.icon;
-							const unlocked = isUnlocked(stage.id);
-							const done = completed.includes(stage.id);
-							return (
-								<button
-									className={`stage-link ${activeStage === stage.id ? 'active' : ''} ${!unlocked ? 'locked' : ''}`}
-									key={stage.id}
-									onClick={() => goToStage(stage.id)}
-									disabled={!unlocked}
-									aria-current={activeStage === stage.id ? 'step' : undefined}
-								>
-									<span className="stage-icon">
-										{done ? (
-											<Check size={16} />
-										) : unlocked ? (
-											<Icon size={16} />
-										) : (
-											<LockKeyhole size={15} />
-										)}
-									</span>
-									<span className="stage-label">
-										<small>{stage.eyebrow}</small>
-										{stage.short}
-									</span>
-									{done ? (
-										<span className="stage-done">SOLVED</span>
-									) : unlocked ? (
-										<ChevronRight className="stage-chevron" size={15} />
-									) : null}
-								</button>
-							);
-						})}
-					</nav>
-
-					<div className="sidebar-bottom">
-						<div className="seal">
-							A.W.<span>1894</span>
-						</div>
-						<p>
-							“Do not be fooled by the obvious. The order matters, the words
-							matter, and the numbers matter most of all.”
+						<h1>
+							The last will of
+							<br />
+							<em>Mr Ambrose Wetherby</em>
+						</h1>
+						<p className="sidebar-intro">
+							A six-document mystery, assembled from the papers of an eccentric
+							collector.
 						</p>
-						<span className="quote-credit">— A. WETHERBY, PERSONAL NOTE</span>
-					</div>
-				</aside>
+						<figure className="archive-photo">
+							<img
+								src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=800&q=80"
+								alt="Tall shelves of books in an old library"
+							/>
+							<figcaption>THE COLLECTOR’S READING ROOM</figcaption>
+						</figure>
 
-				<section className="workspace" aria-live="polite">
-					<div className="workspace-head">
-						<div className="breadcrumbs">
-							<span>CASE FILE</span>
-							<ChevronRight size={13} />
-							<span>{current.eyebrow}</span>
-						</div>
-						<button
-							className="reset-button"
-							onClick={resetCase}
-							title="Reset investigation"
-						>
-							<RotateCcw size={14} />
-							<span>RESET</span>
-						</button>
-					</div>
-
-					{activeStage === 0 && <InventoryStage />}
-					{activeStage === 1 && <LettersStage />}
-					{activeStage === 2 && <CipherStage />}
-					{activeStage === 3 && <JournalStage />}
-					{activeStage === 4 && <SurveyorStage />}
-					{activeStage === 5 && <TestamentStage />}
-
-					{activeStage < stages.length - 1 && (
-						<div className="solve-area">
-							{stageComplete ? (
-								<div className="solved-banner">
-									<span className="solved-check">
-										<Check size={16} />
-									</span>
-									<div>
-										<strong>Document deciphered</strong>
-										<small>
-											{activeStage === stages.length - 2
-												? 'The testament is ready to be read.'
-												: 'The next paper has been released from the envelope.'}
-										</small>
-									</div>
-									<button onClick={() => goToStage(activeStage + 1)}>
-										CONTINUE <ArrowRight size={14} />
-									</button>
-								</div>
-							) : (
-								<form
-									className="answer-form"
-									onSubmit={checkAnswer}
-									aria-busy={checkingAnswer}
-								>
-									<label htmlFor="answer">
-										{activeStage === 3
-											? 'ENTER THE TEN DIGITS IN ORDER'
-											: activeStage === 4
-												? 'ENTER THE SURVEYOR’S SEAL NUMBER'
-												: activeStage === 2
-													? 'DECODE THE CIPHERED SLIP'
-													: 'WHAT DOES THE EVIDENCE SPELL?'}
-									</label>
-									<div className="answer-row">
-										<input
-											id="answer"
-											disabled={checkingAnswer}
-											value={answer}
-											onChange={(event) => {
-												setAnswer(event.target.value);
-												setFeedback('');
-											}}
-											placeholder={
-												activeStage === 3
-													? 'e.g. 1234567890'
-													: activeStage === 4
-														? 'e.g. 123'
-														: 'Your answer'
-											}
-											autoComplete="off"
-											spellCheck="false"
-										/>
-										<button
-											className="submit-button"
-											type="submit"
-											aria-label="Check answer"
-											disabled={checkingAnswer}
-										>
-											<ArrowRight size={18} />
-										</button>
-									</div>
-									<div className="form-foot">
-										<span>Answers are not case-sensitive.</span>
-										{feedback && (
-											<span
-												className={
-													feedback.startsWith('Correct')
-														? 'feedback good'
-														: 'feedback'
-												}
-											>
-												{feedback}
-											</span>
-										)}
-									</div>
-								</form>
-							)}
-
-							<div className="hint-area">
-								<div className="hint-header">
-									<span>
-										<CircleHelp size={15} /> NEED A NUDGE?
-									</span>
-									<button
-										onClick={showHint}
-										disabled={hintsShown >= hints[activeStage].length}
-									>
-										{hintsShown >= hints[activeStage].length
-											? 'ALL HINTS SHOWN'
-											: `REVEAL HINT ${hintsShown + 1} / ${hints[activeStage].length}`}
-										<ArrowDownRight size={14} />
-									</button>
-								</div>
-								{hints[activeStage].slice(0, hintsShown).map((hint, index) => (
-									<p className="hint-copy" key={hint}>
-										<span>{String(index + 1).padStart(2, '0')}</span>
-										{hint}
-									</p>
-								))}
+						<div className="progress-block">
+							<div className="progress-heading">
+								<span>INVESTIGATION</span>
+								<span>
+									{completed.length} / {stages.length}
+								</span>
+							</div>
+							<div
+								className="progress-track"
+								aria-label={`${completed.length} of ${stages.length} documents solved`}
+							>
+								<span
+									style={{
+										width: `${(completed.length / stages.length) * 100}%`,
+									}}
+								/>
 							</div>
 						</div>
-					)}
 
-					<footer className="page-footer">
-						<span>WETHERBY ESTATE · PRIVATE PAPERS</span>
-						<span>ALL TIMES AND PLACES ARE FICTIONAL</span>
-					</footer>
-				</section>
-			</main>
+						<nav className="stage-nav" aria-label="Case documents">
+							{stages.map((stage) => {
+								const Icon = stage.icon;
+								const unlocked = isUnlocked(stage.id);
+								const done = completed.includes(stage.id);
+								return (
+									<button
+										className={`stage-link ${activeStage === stage.id ? 'active' : ''} ${!unlocked ? 'locked' : ''}`}
+										key={stage.id}
+										onClick={() => goToStage(stage.id)}
+										disabled={!unlocked}
+										aria-current={activeStage === stage.id ? 'step' : undefined}
+									>
+										<span className="stage-icon">
+											{done ? (
+												<Check size={16} />
+											) : unlocked ? (
+												<Icon size={16} />
+											) : (
+												<LockKeyhole size={15} />
+											)}
+										</span>
+										<span className="stage-label">
+											<small>{stage.eyebrow}</small>
+											{stage.short}
+										</span>
+										{done ? (
+											<span className="stage-done">SOLVED</span>
+										) : unlocked ? (
+											<ChevronRight className="stage-chevron" size={15} />
+										) : null}
+									</button>
+								);
+							})}
+						</nav>
+
+						<div className="sidebar-bottom">
+							<div className="seal">
+								A.W.<span>1894</span>
+							</div>
+							<p>
+								“Do not be fooled by the obvious. The order matters, the words
+								matter, and the numbers matter most of all.”
+							</p>
+							<span className="quote-credit">— A. WETHERBY, PERSONAL NOTE</span>
+						</div>
+					</aside>
+
+					<section className="workspace" aria-live="polite">
+						<div className="workspace-head">
+							<div className="breadcrumbs">
+								<span>CASE FILE</span>
+								<ChevronRight size={13} />
+								<span>{current.eyebrow}</span>
+							</div>
+							<button
+								className="reset-button"
+								onClick={resetCase}
+								title="Reset investigation"
+							>
+								<RotateCcw size={14} />
+								<span>RESET</span>
+							</button>
+						</div>
+
+						{activeStage === 0 && <InventoryStage />}
+						{activeStage === 1 && <LettersStage />}
+						{activeStage === 2 && <CipherStage />}
+						{activeStage === 3 && <JournalStage />}
+						{activeStage === 4 && <SurveyorStage />}
+						{activeStage === 5 && <TestamentStage />}
+
+						{activeStage < stages.length - 1 && (
+							<div className="solve-area">
+								{stageComplete ? (
+									<div className="solved-banner">
+										<span className="solved-check">
+											<Check size={16} />
+										</span>
+										<div>
+											<strong>Document deciphered</strong>
+											<small>
+												{activeStage === stages.length - 2
+													? 'The testament is ready to be read.'
+													: 'The next paper has been released from the envelope.'}
+											</small>
+										</div>
+										<button onClick={() => goToStage(activeStage + 1)}>
+											CONTINUE <ArrowRight size={14} />
+										</button>
+									</div>
+								) : (
+									<form
+										className="answer-form"
+										onSubmit={checkAnswer}
+										aria-busy={checkingAnswer}
+									>
+										<label htmlFor="answer">
+											{activeStage === 3
+												? 'ENTER THE TEN DIGITS IN ORDER'
+												: activeStage === 4
+													? 'ENTER THE SURVEYOR’S SEAL NUMBER'
+													: activeStage === 2
+														? 'DECODE THE CIPHERED SLIP'
+														: 'WHAT DOES THE EVIDENCE SPELL?'}
+										</label>
+										<div className="answer-row">
+											<input
+												id="answer"
+												disabled={checkingAnswer}
+												value={answer}
+												onChange={(event) => {
+													setAnswer(event.target.value);
+													setFeedback('');
+												}}
+												placeholder={
+													activeStage === 3
+														? 'e.g. 1234567890'
+														: activeStage === 4
+															? 'e.g. 123'
+															: 'Your answer'
+												}
+												autoComplete="off"
+												spellCheck="false"
+											/>
+											<button
+												className="submit-button"
+												type="submit"
+												aria-label="Check answer"
+												disabled={checkingAnswer}
+											>
+												<ArrowRight size={18} />
+											</button>
+										</div>
+										<div className="form-foot">
+											<span>Answers are not case-sensitive.</span>
+											{feedback && (
+												<span
+													className={
+														feedback.startsWith('Correct')
+															? 'feedback good'
+															: 'feedback'
+													}
+												>
+													{feedback}
+												</span>
+											)}
+										</div>
+									</form>
+								)}
+
+								<div className="hint-area">
+									<div className="hint-header">
+										<span>
+											<CircleHelp size={15} /> NEED A NUDGE?
+										</span>
+										<button
+											onClick={showHint}
+											disabled={hintsShown >= hints[activeStage].length}
+										>
+											{hintsShown >= hints[activeStage].length
+												? 'ALL HINTS SHOWN'
+												: `REVEAL HINT ${hintsShown + 1} / ${hints[activeStage].length}`}
+											<ArrowDownRight size={14} />
+										</button>
+									</div>
+									{hints[activeStage]
+										.slice(0, hintsShown)
+										.map((hint, index) => (
+											<p className="hint-copy" key={hint}>
+												<span>{String(index + 1).padStart(2, '0')}</span>
+												{hint}
+											</p>
+										))}
+								</div>
+							</div>
+						)}
+
+						<footer className="page-footer">
+							<span>WETHERBY ESTATE · PRIVATE PAPERS</span>
+							<span>ALL TIMES AND PLACES ARE FICTIONAL</span>
+						</footer>
+					</section>
+				</main>
+			) : (
+				<Introduction onStart={beginInvestigation} />
+			)}
 		</div>
 	);
 }

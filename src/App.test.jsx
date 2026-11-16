@@ -105,6 +105,9 @@ describe('Wetherby investigation', () => {
 
 	it('requires correct answers and unlocks all six documents in order', async () => {
 		render(<App />);
+		fireEvent.click(
+			screen.getByRole('button', { name: 'Begin the investigation' }),
+		);
 
 		expect(
 			screen.getByRole('button', { name: /DOCUMENT II Letters/ }),
@@ -176,5 +179,34 @@ describe('Wetherby investigation', () => {
 		expect(
 			screen.getByRole('heading', { name: 'The final instruction' }),
 		).toBeInTheDocument();
+	});
+
+	it('shows the introduction before starting a new investigation', () => {
+		render(<App />);
+
+		expect(
+			screen.getByRole('heading', {
+				name: 'The story of Ambrose Wetherby',
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole('img', {
+				name: "Ambrose Wetherby's portrait beside a sealed envelope and handwritten note",
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.queryByRole('heading', { name: 'The collector’s inventory' }),
+		).not.toBeInTheDocument();
+
+		fireEvent.click(
+			screen.getByRole('button', { name: 'Begin the investigation' }),
+		);
+
+		expect(
+			screen.getByRole('heading', { name: 'The collector’s inventory' }),
+		).toBeInTheDocument();
+		expect(JSON.parse(localStorage.getItem('wetherby-progress')).started).toBe(
+			true,
+		);
 	});
 });
