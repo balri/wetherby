@@ -156,7 +156,25 @@ describe('Wetherby investigation', () => {
 			screen.getByRole('button', { name: /DOCUMENT III Cipher/ }),
 		).toBeEnabled();
 		expect(
+			screen.getByRole('button', { name: /DOCUMENT III Cipher/ }),
+		).toHaveAttribute('aria-current', 'step');
+		expect(
 			screen.getByRole('button', { name: /DOCUMENT IV Journal/ }),
 		).toBeDisabled();
+	});
+
+	it('opens the final document when every stage is completed', () => {
+		localStorage.setItem(
+			'wetherby-progress',
+			JSON.stringify({ completed: [0, 1, 2, 3, 4, 5], hints: {} }),
+		);
+		render(<App />);
+
+		expect(
+			screen.getByRole('button', { name: /DOCUMENT VI Will/ }),
+		).toHaveAttribute('aria-current', 'step');
+		expect(
+			screen.getByRole('heading', { name: 'The final instruction' }),
+		).toBeInTheDocument();
 	});
 });

@@ -98,7 +98,7 @@ export default function LettersStage() {
 			<div className="stage-title-row">
 				<div>
 					<span className="eyebrow">DOCUMENT II · PRIVATE CORRESPONDENCE</span>
-					<h2>Letters to the solicitor</h2>
+					<h2>Letters from A. Wetherby</h2>
 				</div>
 				<span className="paper-number">
 					7 ENVELOPES <ArrowDownRight size={14} />

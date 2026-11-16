@@ -108,7 +108,12 @@ function readProgress() {
 
 export default function App() {
 	const [progress, setProgress] = useState(readProgress);
-	const [activeStage, setActiveStage] = useState(0);
+	const [activeStage, setActiveStage] = useState(() => {
+		const nextStage = stages.find(
+			(stage) => !progress.completed.includes(stage.id),
+		);
+		return nextStage ? nextStage.id : stages.length - 1;
+	});
 	const [answer, setAnswer] = useState('');
 	const [feedback, setFeedback] = useState('');
 	const [checkingAnswer, setCheckingAnswer] = useState(false);
