@@ -543,6 +543,66 @@ button {
 	animation: item-modal-enter 0.2s ease-out both;
 }
 
+.letter-modal {
+	width: min(620px, 100%);
+	max-height: min(720px, 100%);
+	display: block;
+	overflow-y: auto;
+}
+
+.letter-modal-copy {
+	padding: 38px clamp(22px, 6vw, 48px);
+}
+
+.letter-modal-copy .letter-modal-salutation {
+	margin: 0 0 10px;
+	color: #3e4b42;
+	font: italic 15px var(--serif);
+}
+
+.letter-modal-copy #letter-modal-body p {
+	margin: 0 0 13px;
+}
+
+.letter-modal-copy .letter-modal-signoff {
+	margin-top: 21px;
+	color: #3e4b42;
+	font: italic 14px var(--serif);
+	text-align: right;
+}
+
+.item-modal-navigation {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 22px;
+	padding-top: 13px;
+	border-top: 1px solid var(--edge);
+}
+
+.modal-navigation-button {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 0;
+	border: 0;
+	background: none;
+	color: var(--green-dark);
+	font: 9px var(--mono);
+	cursor: pointer;
+}
+
+.modal-navigation-button:disabled {
+	color: #a4aaa2;
+	cursor: default;
+}
+
+.modal-navigation-count {
+	color: #818a81;
+	font: 9px var(--mono);
+}
+
 .item-modal-image {
 	width: 100%;
 	height: auto;
@@ -822,15 +882,30 @@ button {
 
 .letter-card {
 	position: relative;
+	width: 100%;
 	min-height: 142px;
 	padding: 14px 15px 12px 32px;
 	border: 1px solid #d8d6ca;
 	background-color: #f8f6ed;
 	box-shadow: 2px 3px 0 rgba(68, 73, 60, 0.04);
+	color: inherit;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+	transition:
+		border-color 0.18s ease,
+		box-shadow 0.18s ease,
+		transform 0.18s ease;
 }
 
 .letter-card:nth-child(3n) {
 	background-color: #f4f3e8;
+}
+
+.letter-card:hover {
+	border-color: #aeb8a9;
+	box-shadow: 3px 5px 0 rgba(68, 73, 60, 0.08);
+	transform: translateY(-1px);
 }
 
 .margin-number {
@@ -857,16 +932,21 @@ button {
 }
 
 .letter-to {
+	display: block;
 	margin: 9px 0 5px;
 	font: italic 12px var(--serif);
 	color: #3e4b42;
 }
 
 .letter-excerpt {
+	display: block;
 	min-height: 45px;
-	margin: 0;
 	color: #626c63;
 	font: 11px/1.55 var(--serif);
+}
+
+.letter-excerpt::after {
+	content: ' …';
 }
 
 .letter-signoff {
@@ -875,34 +955,6 @@ button {
 	color: #8c9188;
 	font: italic 10px var(--serif);
 	text-align: right;
-}
-
-.artifact-clue {
-	display: flex;
-	align-items: center;
-	gap: 13px;
-	margin: 15px 0 0;
-	padding: 10px 12px;
-	border: 1px solid rgba(189, 91, 67, 0.2);
-	background: rgba(189, 91, 67, 0.045);
-}
-
-.clue-rule {
-	align-self: stretch;
-	width: 2px;
-	background: var(--red);
-}
-
-.artifact-clue p {
-	flex: 1;
-	margin: 0;
-	color: #59645b;
-	font: italic 13px/1.5 var(--serif);
-}
-
-.clue-sign {
-	color: var(--red);
-	font: italic 14px var(--serif);
 }
 
 .cipher-artifact {

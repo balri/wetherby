@@ -72,8 +72,7 @@ const hints = [
 		'Wetherby tells you which dates deserve to stay. Ordinary calendar knowledge is enough.',
 	],
 	[
-		'The small number at the left of each letter is useful, but it is not a letter.',
-		'Sort the letters by postmark. Use the number to count into the recipient’s first name.',
+		'The small number beside each letter seems oddly specific. Perhaps the recipient knows what to make of it.',
 	],
 	[
 		'Use the length of the previous document’s answer as the shift.',

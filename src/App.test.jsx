@@ -8,6 +8,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
 import InventoryStage from './components/InventoryStage';
+import LettersStage from './components/LettersStage';
 
 const testAnswers = ['TESTZERO', 'TESTONE', 'TESTTWO', 'TESTTHREE', 'TESTFOUR'];
 
@@ -54,8 +55,51 @@ describe('Wetherby investigation', () => {
 		expect(
 			screen.getByRole('img', { name: 'Ivory chess knight' }),
 		).toBeInTheDocument();
+		expect(
+			screen.getByRole('button', { name: 'Previous item' }),
+		).toBeDisabled();
+		fireEvent.click(screen.getByRole('button', { name: 'Next item' }));
+		expect(
+			screen.getByRole('heading', { name: 'Magnifying glass' }),
+		).toBeInTheDocument();
+		fireEvent.click(screen.getByRole('button', { name: 'Previous item' }));
+		expect(
+			screen.getByRole('heading', { name: 'Ivory chess knight' }),
+		).toBeInTheDocument();
 
 		fireEvent.click(screen.getByRole('button', { name: 'Close item details' }));
+		expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+	});
+
+	it('opens a letter with its complete text and closes the modal', () => {
+		render(<LettersStage />);
+
+		fireEvent.click(
+			screen.getByRole('button', { name: 'Read letter to Alice, 08 JUL 1894' }),
+		);
+
+		expect(screen.getByRole('dialog')).toBeInTheDocument();
+		expect(
+			screen.getByRole('button', { name: 'Previous letter' }),
+		).toBeDisabled();
+		expect(
+			screen.getByRole('heading', { name: 'Letter to Alice' }),
+		).toBeInTheDocument();
+		expect(screen.getByText(/The tide was unusually high/)).toBeInTheDocument();
+		expect(
+			screen.getByText(/I shall bring the papers you asked for/),
+		).toBeInTheDocument();
+
+		fireEvent.click(screen.getByRole('button', { name: 'Next letter' }));
+		expect(
+			screen.getByRole('heading', { name: 'Letter to Lucy' }),
+		).toBeInTheDocument();
+		fireEvent.click(screen.getByRole('button', { name: 'Previous letter' }));
+		expect(
+			screen.getByRole('heading', { name: 'Letter to Alice' }),
+		).toBeInTheDocument();
+
+		fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
 		expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 	});
 

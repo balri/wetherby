@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowDownRight, X } from 'lucide-react';
+import { ArrowDownRight, ArrowLeft, ArrowRight, X } from 'lucide-react';
 import ivoryChessKnightImage from '../assets/inventory/01_ivory_chess_knight.jpg';
 import magnifyingGlassImage from '../assets/inventory/02_magnifying_glass.jpg';
 import brassTelescopeImage from '../assets/inventory/03_brass_telescope.jpg';
@@ -95,7 +95,9 @@ const inventory = [
 ];
 
 export default function InventoryStage() {
-	const [selectedItem, setSelectedItem] = useState(null);
+	const [selectedItemIndex, setSelectedItemIndex] = useState(null);
+	const selectedItem =
+		selectedItemIndex === null ? null : inventory[selectedItemIndex];
 
 	return (
 		<>
@@ -126,7 +128,7 @@ export default function InventoryStage() {
 							className="inventory-entry"
 							type="button"
 							key={entry.item}
-							onClick={() => setSelectedItem(entry)}
+							onClick={() => setSelectedItemIndex(index)}
 						>
 							<span className="entry-index">
 								{String(index + 1).padStart(2, '0')}
@@ -147,7 +149,8 @@ export default function InventoryStage() {
 				<div
 					className="item-modal-backdrop"
 					onClick={(event) => {
-						if (event.target === event.currentTarget) setSelectedItem(null);
+						if (event.target === event.currentTarget)
+							setSelectedItemIndex(null);
 					}}
 				>
 					<section
@@ -159,14 +162,14 @@ export default function InventoryStage() {
 						autoFocus
 						tabIndex={-1}
 						onKeyDown={(event) => {
-							if (event.key === 'Escape') setSelectedItem(null);
+							if (event.key === 'Escape') setSelectedItemIndex(null);
 						}}
 					>
 						<button
 							className="item-modal-close"
 							type="button"
 							aria-label="Close item details"
-							onClick={() => setSelectedItem(null)}
+							onClick={() => setSelectedItemIndex(null)}
 						>
 							<X size={18} />
 						</button>
@@ -182,6 +185,32 @@ export default function InventoryStage() {
 							<h3 id="item-modal-title">{selectedItem.item}</h3>
 							<p className="item-modal-note">{selectedItem.note}</p>
 							<p id="item-modal-description">{selectedItem.description}</p>
+							<div className="item-modal-navigation">
+								<button
+									className="modal-navigation-button"
+									type="button"
+									aria-label="Previous item"
+									disabled={selectedItemIndex === 0}
+									onClick={() => setSelectedItemIndex(selectedItemIndex - 1)}
+								>
+									<ArrowLeft size={14} />
+									<span>PREVIOUS</span>
+								</button>
+								<span className="modal-navigation-count">
+									{String(selectedItemIndex + 1).padStart(2, '0')} /{' '}
+									{String(inventory.length).padStart(2, '0')}
+								</span>
+								<button
+									className="modal-navigation-button"
+									type="button"
+									aria-label="Next item"
+									disabled={selectedItemIndex === inventory.length - 1}
+									onClick={() => setSelectedItemIndex(selectedItemIndex + 1)}
+								>
+									<span>NEXT</span>
+									<ArrowRight size={14} />
+								</button>
+							</div>
 						</div>
 					</section>
 				</div>
