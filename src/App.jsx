@@ -76,9 +76,7 @@ const hints = [
 		'The small number beside each letter seems oddly specific. Perhaps the senders know what to make of it.',
 	],
 	[
-		'Use the length of the previous document’s answer as the shift.',
-		'Move each ciphertext letter seven places backward through the alphabet.',
-		'The decoded word names the operation for each reading pair.',
+		"I have always maintained that a man's daily record tells more about him than any number of conversations.",
 	],
 	[
 		'The decoded word names the operation. The margin marks separate south from east.',
