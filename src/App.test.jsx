@@ -75,7 +75,9 @@ describe('Wetherby investigation', () => {
 		render(<LettersStage />);
 
 		fireEvent.click(
-			screen.getByRole('button', { name: 'Read letter to Alice, 08 JUL 1894' }),
+			screen.getByRole('button', {
+				name: 'Read letter from Alice to Ambrose, 08 JUL 1894',
+			}),
 		);
 
 		expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -83,7 +85,7 @@ describe('Wetherby investigation', () => {
 			screen.getByRole('button', { name: 'Previous letter' }),
 		).toBeDisabled();
 		expect(
-			screen.getByRole('heading', { name: 'Letter to Alice' }),
+			screen.getByRole('heading', { name: 'Letter from Alice' }),
 		).toBeInTheDocument();
 		expect(screen.getByText(/The tide was unusually high/)).toBeInTheDocument();
 		expect(
@@ -92,11 +94,11 @@ describe('Wetherby investigation', () => {
 
 		fireEvent.click(screen.getByRole('button', { name: 'Next letter' }));
 		expect(
-			screen.getByRole('heading', { name: 'Letter to Lucy' }),
+			screen.getByRole('heading', { name: 'Letter from Lucy' }),
 		).toBeInTheDocument();
 		fireEvent.click(screen.getByRole('button', { name: 'Previous letter' }));
 		expect(
-			screen.getByRole('heading', { name: 'Letter to Alice' }),
+			screen.getByRole('heading', { name: 'Letter from Alice' }),
 		).toBeInTheDocument();
 
 		fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });

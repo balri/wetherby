@@ -73,7 +73,7 @@ const hints = [
 		'Wetherby tells you which dates deserve to stay. Ordinary calendar knowledge is enough.',
 	],
 	[
-		'The small number beside each letter seems oddly specific. Perhaps the recipient knows what to make of it.',
+		'The small number beside each letter seems oddly specific. Perhaps the senders know what to make of it.',
 	],
 	[
 		'Use the length of the previous document’s answer as the shift.',

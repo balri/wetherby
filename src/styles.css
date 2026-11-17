@@ -1000,8 +1000,15 @@ button {
 	position: absolute;
 	top: 17px;
 	left: 11px;
-	color: var(--red);
-	font: 12px var(--mono);
+	transform: rotate(-8deg);
+	color: #77786f;
+	font:
+		italic 15px/1 'Bradley Hand',
+		'Segoe Print',
+		'Comic Sans MS',
+		cursive;
+	text-shadow: 0.25px 0.25px rgba(45, 48, 42, 0.35);
+	opacity: 0.82;
 }
 
 .letter-postmark {

@@ -4,8 +4,11 @@ import { ArrowDownRight, ArrowLeft, ArrowRight, Mail, X } from 'lucide-react';
 const letters = [
 	{
 		date: '08 JUL 1894',
-		recipient: 'Alice',
-		position: 2,
+		sender: 'Alice',
+		recipient: 'Ambrose',
+		greeting: 'Dear Ambrose,',
+		signoff: 'Yours, Alice',
+		marginNumber: 2,
 		excerpt:
 			'The river at dusk was the colour of old pewter. I watched it from the bridge until the lamps came on.',
 		body: [
@@ -16,8 +19,11 @@ const letters = [
 	},
 	{
 		date: '02 MAY 1894',
-		recipient: 'Lucy',
-		position: 2,
+		sender: 'Lucy',
+		recipient: 'Ambrose',
+		greeting: 'Ambrose,',
+		signoff: 'Yours, Lucy',
+		marginNumber: 2,
 		excerpt:
 			'A parcel arrived with no return address. It contained three buttons and a very stern note.',
 		body: [
@@ -28,8 +34,11 @@ const letters = [
 	},
 	{
 		date: '03 APR 1894',
-		recipient: 'Julia',
-		position: 1,
+		sender: 'Julia',
+		recipient: 'Ambrose',
+		greeting: 'Dear Ambrose,',
+		signoff: 'Yours sincerely, Julia',
+		marginNumber: 1,
 		excerpt:
 			'The new lens is excellent, though it makes the housekeeper appear even more suspicious than usual.',
 		body: [
@@ -40,8 +49,11 @@ const letters = [
 	},
 	{
 		date: '20 JUN 1894',
-		recipient: 'Caleb',
-		position: 2,
+		sender: 'Caleb',
+		recipient: 'Ambrose',
+		greeting: 'My dear Ambrose,',
+		signoff: 'Yours, Caleb',
+		marginNumber: 2,
 		excerpt:
 			'I have taken to walking before breakfast. The gulls are less conversational than the neighbours.',
 		body: [
@@ -52,8 +64,11 @@ const letters = [
 	},
 	{
 		date: '15 MAY 1894',
-		recipient: 'Bernard',
-		position: 3,
+		sender: 'Bernard',
+		recipient: 'Ambrose',
+		greeting: 'My dear Ambrose,',
+		signoff: 'Yours, Bernard',
+		marginNumber: 3,
 		excerpt:
 			'Your account of the auction was diverting. I should have bid on the little brass box after all.',
 		body: [
@@ -64,8 +79,11 @@ const letters = [
 	},
 	{
 		date: '05 JUN 1894',
-		recipient: 'Anne',
-		position: 2,
+		sender: 'Anne',
+		recipient: 'Ambrose',
+		greeting: 'Dear Ambrose,',
+		signoff: 'Yours sincerely, Anne',
+		marginNumber: 2,
 		excerpt:
 			'Please return the blue volume when convenient. Its spine is cracked, but the endpapers are sound.',
 		body: [
@@ -76,8 +94,11 @@ const letters = [
 	},
 	{
 		date: '17 APR 1894',
-		recipient: 'Robert',
-		position: 2,
+		sender: 'Robert',
+		recipient: 'Ambrose',
+		greeting: 'Ambrose,',
+		signoff: 'Yours, Robert',
+		marginNumber: 2,
 		excerpt:
 			'The map you sent is upside down, unless the world has lately changed its habits.',
 		body: [
@@ -98,7 +119,7 @@ export default function LettersStage() {
 			<div className="stage-title-row">
 				<div>
 					<span className="eyebrow">DOCUMENT II · PRIVATE CORRESPONDENCE</span>
-					<h2>Letters from A. Wetherby</h2>
+					<h2>Letters to A. Wetherby</h2>
 				</div>
 				<span className="paper-number">
 					7 ENVELOPES <ArrowDownRight size={14} />
@@ -118,16 +139,16 @@ export default function LettersStage() {
 						type="button"
 						key={letter.date}
 						onClick={() => setSelectedLetterIndex(index)}
-						aria-label={`Read letter to ${letter.recipient}, ${letter.date}`}
+						aria-label={`Read letter from ${letter.sender} to ${letter.recipient}, ${letter.date}`}
 					>
-						<span className="margin-number">{letter.position}</span>
+						<span className="margin-number">{letter.marginNumber}</span>
 						<span className="letter-postmark">
 							<span>POSTMARK</span>
 							<time>{letter.date}</time>
 						</span>
-						<span className="letter-to">Dear {letter.recipient},</span>
+						<span className="letter-to">{letter.greeting}</span>
 						<span className="letter-excerpt">{letter.excerpt}</span>
-						<span className="letter-signoff">Yours, A.W.</span>
+						<span className="letter-signoff">{letter.signoff}</span>
 					</button>
 				))}
 			</div>
@@ -151,6 +172,12 @@ export default function LettersStage() {
 							if (event.key === 'Escape') setSelectedLetterIndex(null);
 						}}
 					>
+						<span
+							className="margin-number"
+							aria-label={`Pencilled margin number ${selectedLetter.marginNumber}`}
+						>
+							{selectedLetter.marginNumber}
+						</span>
 						<button
 							className="item-modal-close"
 							type="button"
@@ -164,16 +191,16 @@ export default function LettersStage() {
 								PRIVATE CORRESPONDENCE · {selectedLetter.date}
 							</span>
 							<h3 id="letter-modal-title">
-								Letter to {selectedLetter.recipient}
+								Letter from {selectedLetter.sender}
 							</h3>
 							<p className="letter-modal-salutation">
-								Dear {selectedLetter.recipient},
+								{selectedLetter.greeting}
 							</p>
 							<div id="letter-modal-body">
 								{selectedLetter.body.map((paragraph) => (
 									<p key={paragraph}>{paragraph}</p>
 								))}
-								<p className="letter-modal-signoff">Yours, A.W.</p>
+								<p className="letter-modal-signoff">{selectedLetter.signoff}</p>
 							</div>
 							<div className="item-modal-navigation">
 								<button
